@@ -15,7 +15,7 @@ on:
 # Jobs defined in the workflow
 jobs:
 
-  backend-cd-test:
+  mr-backend-cd-test:
     runs-on: ubuntu-latest
     steps:
       #checkout code
@@ -45,7 +45,7 @@ jobs:
       - name: Run tests    
         run: cd starter/backend && pipenv run test 
       
-  backend-cd-lint:
+  mr-backend-cd-lint:
     runs-on: ubuntu-latest
     steps:
       #checkout code
@@ -74,8 +74,8 @@ jobs:
       - name: Run linter    
         run: cd starter/backend && pipenv run flake8
   
-  backend-cd-build:
-    needs: [backend-cd-test, backend-cd-lint]
+  mr-backend-cd-build:
+    needs: [mr-backend-cd-test, mr-backend-cd-lint]
     if: success()
     runs-on: ubuntu-latest
     steps:
@@ -99,8 +99,8 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR Public
         run: |
           docker build -t backend ./starter/backend/ 
-          docker tag backend:${{ vars.IMAGE_TAG }} ${{ vars.BACKEND_ECR }}:${GITHUB_SHA::7}
-          docker push ${{ vars.BACKEND_ECR }}:${GITHUB_SHA::7}
+          docker tag backend:${{ GITHUB_SHA::7 }} ${{ secrets.BACKEND_ECR }}:${GITHUB_SHA::7}
+          docker push ${{ secrets.BACKEND_ECR }}:${GITHUB_SHA::7}
 
       #Deploy to EKS
       - name: Deploying to EKS
@@ -108,7 +108,7 @@ jobs:
           REPOSITORY: backend #name of the pod
 
         run: |
-          aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
+          aws eks update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
           kubectl apply -f ./starter/backend/k8s/deployment.yaml
-          kubectl set image deployment/$REPOSITORY $REPOSITORY=${{ vars.BACKEND_ECR }}:${GITHUB_SHA::7}
+          kubectl set image deployment/$REPOSITORY $REPOSITORY=${{ secrets.BACKEND_ECR }}:${GITHUB_SHA::7}
           kubectl apply -f ./starter/backend/k8s/service.yaml
