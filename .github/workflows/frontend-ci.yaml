@@ -6,7 +6,6 @@ on:
   # Manual trigger using the workflow_dispatch event
   workflow_dispatch:
   
-  
   # Automatic trigger on pull request events targeting the main branch
   pull_request:
     branches:
@@ -16,7 +15,7 @@ on:
 # Jobs defined in the workflow
 jobs:
 
-  frontend-ci-test:
+  MR-feci-frontend-ci-test:
     runs-on: ubuntu-latest
     steps:
       #checkout code
@@ -39,7 +38,7 @@ jobs:
       - name: Run tests
         run: cd starter/frontend &&  npm test
       
-  frontend-ci-lint:
+  MR-feci-frontend-ci-lint:
     runs-on: ubuntu-latest
     steps:
       #checkout code
@@ -62,8 +61,8 @@ jobs:
       - name: Run tests
         run: cd starter/frontend &&  npm run lint
   
-  frontend-ci-build:
-    needs: [frontend-ci-test, frontend-ci-lint]
+  MR-feci-frontend-ci-build:
+    needs: [MR-feci-frontend-ci-test, MR-feci-frontend-ci-lint]
     if: success()
     runs-on: ubuntu-latest
     steps:
