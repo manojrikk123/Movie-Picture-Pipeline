@@ -99,7 +99,7 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR Public
         run: |
           docker build -t backend ./starter/backend/ 
-          docker tag backend:${GITHUB_SHA::7} ${{ secrets.BACKEND_ECR }}:${GITHUB_SHA::7}
+          docker tag backend:${{ vars.IMAGE_TAG }} ${{ vars.BACKEND_ECR }}:${GITHUB_SHA::7}
           docker push ${{ secrets.BACKEND_ECR }}:${GITHUB_SHA::7}
 
       #Deploy to EKS
