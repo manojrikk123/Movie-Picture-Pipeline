@@ -97,10 +97,19 @@ jobs:
 
       #Build and push to ECR
       - name: Build, tag, and push docker image to Amazon ECR Public
-        run: |
-          docker build -t backend ./starter/backend/ 
-          docker tag backend:${{ GITHUB_SHA::7 }} ${{ vars.BACKEND_ECR }}:${GITHUB_SHA::7}
-          docker push ${{ vars.BACKEND_ECR }}:${GITHUB_SHA::7}
+       run: |
+    # Build the Docker image
+    docker build -t backend ./starter/backend/
+
+    # Extract the first 7 characters of GITHUB_SHA
+    SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+
+    # Tag the Docker image with the first 7 characters of GITHUB_SHA
+    docker tag backend:${SHORT_SHA} ${{ env.BACKEND_ECR }}:${SHORT_SHA}
+
+    # Push the Docker image to Amazon ECR Public
+    docker push ${{ env.BACKEND_ECR }}:${SHORT_SHA}
+
 
       #Deploy to EKS
       - name: Deploying to EKS
