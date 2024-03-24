@@ -90,7 +90,7 @@ jobs:
 
         run: |
           docker build -t frontend ./starter/frontend/ --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000
-          docker tag frontend:${GITHUB_SHA::7} ${{ vars.FRONTEND_ECR }}:${GITHUB_SHA::7}
+          docker tag frontend:${{ vars.IMAGE_TAG }} ${{ vars.FRONTEND_ECR }}:${GITHUB_SHA::7}
           docker push ${{ vars.FRONTEND_ECR }}:${GITHUB_SHA::7}
 
       #Deploy to EKS
