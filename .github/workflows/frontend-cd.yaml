@@ -6,17 +6,16 @@ on:
   # Manual trigger using the workflow_dispatch event
   workflow_dispatch:
   
-  
   # Automatic trigger on pull request events targeting the main branch
   push:
     branches:
-        - main
+      - main
       
 
 # Jobs defined in the workflow
 jobs:
 
-  frontend-cd-test:
+  MR-fecd-frontend-cd-test:
     runs-on: ubuntu-latest
     steps:
       #checkout code
@@ -39,7 +38,7 @@ jobs:
       - name: Run tests
         run: cd starter/frontend &&  npm test
       
-  frontend-cd-lint:
+  MR-fecd-frontend-cd-lint:
     runs-on: ubuntu-latest
     steps:
       #checkout code
@@ -62,8 +61,8 @@ jobs:
       - name: Run tests
         run: cd starter/frontend &&  npm run lint
   
-  frontend-cd-build:
-    needs: [frontend-cd-test, frontend-cd-lint]
+  MR-fecd-frontend-cd-build:
+    needs: [MR-fecd-frontend-cd-test, MR-fecd-frontend-cd-lint]
     if: success()
     runs-on: ubuntu-latest
     steps:
@@ -103,8 +102,3 @@ jobs:
           kubectl apply -f ./starter/frontend/k8s/deployment.yaml
           kubectl set image deployment/$REPOSITORY $REPOSITORY=${{ vars.FRONTEND_ECR }}:${GITHUB_SHA::7}
           kubectl apply -f ./starter/frontend/k8s/service.yaml
-
-
-
-       
-          
